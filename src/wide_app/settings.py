@@ -64,7 +64,7 @@ ROOT_URLCONF = 'wide_app.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['/opt/widehackathon/wide_app/wide_app/templates'],
+        'DIRS': ['wide_app/templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
