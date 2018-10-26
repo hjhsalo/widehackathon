@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html>
     <head>
         <meta charset="utf-8">
@@ -7,4 +7,45 @@
     <body>
         <h1>{{ message }}</h1>
     </body>
+</html> -->
+
+<!DOCTYPE html>
+
+<html>
+    <head>
+        {% load static %}
+        <meta charset="utf-8">
+        <link rel="stylesheet" type="text/css" href='{% static "app.css" %}'>
+    </head>
+
+    <body style="width: 20em; height: 20em">
+        <div id="app" class="w3-container">
+            {% verbatim %}
+            <div id="popup-content">
+                <div class="button scrape">Scrape</div>
+                <div id="keywords-title" class="sub-title hidden">Keywords:</div>
+                <ul v-if="showKeywords">
+                    <li class="generic-list" v-for="kw in keywords">
+                        {{ kw }}
+                    </li>
+                </ul>
+                <div class="button search">Search</div>
+                <div id="datasets-title" class="sub-title hidden">Results:</div>
+                <ul v-if="showSearchResults">
+                    <li class="generic-list" v-for="res in searchResults">
+                        {{ res.url }}
+                    </li>
+                </ul>
+                <div id="error-content" class="hidden">
+                    <p>Can't execute content script on this page. Check extension configuration.</p>
+                </div>
+            {% endverbatim %}
+            </div>
+        </div>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.17/vue.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/vue-resource/1.5.1/vue-resource.js"></script>
+        <script src='{% static "app.js" %}'></script>
+    </body>
+
 </html>
+

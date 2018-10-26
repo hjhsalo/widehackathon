@@ -3,7 +3,9 @@ from functools import wraps
 import json
 import logging
 
-from django.http import HttpResponse, JsonResponse
+from annif_client import AnnifClient
+from finna_client import FinnaClient
+from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 from django.views.generic import TemplateView
 from django.shortcuts import render
@@ -30,28 +32,21 @@ def handle_errors():
 
 
 def _get_keywords_from_annif(payload):
+    annif = AnnifClient()
     try:
-        response = requests.post('https://annif.fi/what', json={ 'data': payload })
+        results = annif.analyze(project_id='yso-en', text="The quick brown fox", limit=5)
     except:
         _logger.exception('Could not connect to annif')
         raise Exception('Could not connect to annif')
 
-    if response.status_code != 200:
-        _logger.warning('Annif returned error code: %d' % response.status_code)
-        _logger.warning('Message: %s' % response.context)
-        raise Exception('Annif returned an error: %s' % response.content)
-
-    try:
-        keywords = response.json()
-    except:
-        _logger.exception('Could not parse json from annif response')
-        raise Exception('Error occurred while parsing annif response')
-
+    keywords = [row['label'] for row in results]
     return keywords
 
 
 def _search_datasets(keywords):
-    pass
+    finna = FinnaClient()
+    results = finna.search(', '.join(keywords), limit=5)
+    return results
 
 
 @handle_errors()
@@ -71,16 +66,11 @@ def scrape(request):
         return JsonResponse({ 'keywords': [] })
 
     try:
-        request_data = json.loads(request.body)
-    except json.decoder.JSONDecodeError:
+        request_data = json.loads(request.body.decode('utf-8'))
+    except:
         return JsonResponse({ 'message': 'Received data is not valid json' }, status=500)
 
-    # keywords = _get_keywords_from_annif(request_data)
-
-    keywords = [
-        'heijakkaa',
-        'hoijakkaa',
-    ]
+    keywords = _get_keywords_from_annif(request_data)
 
     return JsonResponse({ 'keywords': keywords })
 
@@ -95,19 +85,16 @@ def search(request):
         return JsonResponse({ 'results': [] })
 
     try:
-        request_data = json.loads(request.body)
+        request_data = json.loads(request.body.decode('utf-8'))
     except json.decoder.JSONDecodeError:
         return JsonResponse({ 'message': 'Received data is not valid json' }, status=500)
 
-    # results = _search_datasets(request_data)
-
-    results = [
-        { 'url': 'https://www.csc.fi', 'score': 42, 'other...': 'usefull stuff?' },
-        { 'url': 'https://www.cern.ch', 'score': 42, 'other...': 'usefull stuff?' },
-    ]
+    # import ipdb; ipdb.set_trace()
+    results = _search_datasets(request_data)
+    from pprint import pprint
+    pprint(results)
 
     return JsonResponse({ 'results': results })
-
 
 
 class IndexView(TemplateView):
