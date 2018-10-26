@@ -32,7 +32,7 @@
                 publishedStartDate: null,
                 publishedEtartDate: null,
                 showKeywords: false,
-                showSearchResults: true
+                showSearchResults: false
             }
         },
         methods: {

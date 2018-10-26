@@ -64,6 +64,7 @@
             })
         }).catch(function(error) {
             log('i guess the backend returned an error:');
+            log(error);
             error.text().then( errorMessage => {
                 log(errorMessage);
             });
