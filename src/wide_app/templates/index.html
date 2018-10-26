@@ -1,16 +1,4 @@
-<!-- <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8">
-        <title>Wide App</title>
-    </head>
-    <body>
-        <h1>{{ message }}</h1>
-    </body>
-</html> -->
-
 <!DOCTYPE html>
-
 <html>
     <head>
         {% load static %}
@@ -18,22 +6,27 @@
         <link rel="stylesheet" type="text/css" href='{% static "app.css" %}'>
     </head>
 
-    <body style="width: 20em; height: 20em">
+    <body>
         <div id="app" class="w3-container">
             {% verbatim %}
             <div id="popup-content">
                 <div class="button scrape">Scrape</div>
                 <div id="keywords-title" class="sub-title hidden">Keywords:</div>
                 <ul v-if="showKeywords">
-                    <li class="generic-list" v-for="kw in keywords">
+                    <li v-for="kw in keywords">
                         {{ kw }}
                     </li>
                 </ul>
                 <div class="button search">Search</div>
                 <div id="datasets-title" class="sub-title hidden">Results:</div>
                 <ul v-if="showSearchResults">
-                    <li class="generic-list" v-for="res in searchResults">
-                        {{ res.url }}
+                    <li v-for="res in searchResults">
+                        <div><strong>Title: </strong>{{ res.title }}</div>
+                        <div><strong>Abstract: </strong>{{ res.abstract }}</div>
+                        <template v-for="link in res.links">
+                            <div><strong>URL: </strong>{{ link }}</div>
+                        </template>
+                        <hr />
                     </li>
                 </ul>
                 <div id="error-content" class="hidden">

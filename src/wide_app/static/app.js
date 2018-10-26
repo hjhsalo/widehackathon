@@ -48,18 +48,6 @@ var app = new Vue({
                 console.log('fffffffffff');
                 console.log(response);
             });
-            // browser.tabs.sendMessage(
-            //     tabs[0].id,
-            //     { action: 'search', keywords: vm.keywords }
-            // ).then(response => {
-            //     console.log("Message from the content script search:");
-            //     console.log(response);
-            //     vm.searchResults = response.results;
-            //     vm.showSearchResults = true;
-            // }).catch(function(err) {
-            //     console.log('fffffffff');
-            //     console.log(err);
-            // });
         },
 
         listenForClicks: function() {
