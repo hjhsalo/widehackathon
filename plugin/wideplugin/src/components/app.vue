@@ -10,10 +10,16 @@
         <div class="button search">Search</div>
         <div id="datasets-title" class="sub-title hidden">Results:</div>
         <ul v-if="showSearchResults">
-            <li class="generic-list" v-for="res in searchResults">
-                {{ res.url }}
+            <li v-for="res in searchResults">
+                <div><strong>Title: </strong>{{ res.title }}</div>
+                <div><strong>Abstract: </strong>{{ res.abstract }}</div>
+                <template v-for="link in res.links">
+                    <div><strong>URL: </strong>{{ link }}</div>
+                </template>
+                <hr />
             </li>
         </ul>
+        <div v-show="totalResponseCount" class="button show-more">Show more results</div>
         <div id="error-content" class="hidden">
             <p>Can't execute content script on this page. Check extension configuration.</p>
         </div>
@@ -32,7 +38,8 @@
                 publishedStartDate: null,
                 publishedEtartDate: null,
                 showKeywords: false,
-                showSearchResults: false
+                showSearchResults: false,
+                totalResponseCount: null
             }
         },
         methods: {
@@ -65,7 +72,8 @@
                 ).then(response => {
                     console.log("Message from the content script search:");
                     console.log(response);
-                    vm.searchResults = response.results;
+                    vm.totalResponseCount = response.results.length
+                    vm.searchResults = response.results.slice(0, 5);
                     vm.showSearchResults = true;
                 }).catch(function(err) {
                     console.log('fffffffff');
@@ -73,8 +81,16 @@
                 });
             },
 
+            showMore: function(tabs) {
+                var vm = this;
+                var creating = browser.tabs.create({
+                    url:"http://localhost:8000?keywords=" + vm.keywords.join(',')
+                });
+            },
+
             listenForClicks: function() {
                 document.addEventListener("click", (e) => {
+                    // console.log(e.target.classList);
                     if (e.target.classList.contains("scrape")) {
                         browser.tabs.query({ active: true, currentWindow: true })
                             .then(this.sendScrapeActionToTab)
@@ -89,6 +105,13 @@
                                 console.error(err);
                             });
                     }
+                    else if (e.target.classList.contains("show-more")) {
+                        browser.tabs.query({ active: true, currentWindow: true })
+                            .then(this.showMore)
+                            .catch(error => {
+                                console.error(err);
+                            });
+                    }
                 });
             },
 
@@ -97,6 +120,7 @@
                 console.error(`Failed to execute beastify content script: ${error.message}`);
             }
         },
+
         created () { 
             console.log('app created()...');
             browser.tabs.executeScript({file: "/content_scripts/content_script.js"})
@@ -128,5 +152,8 @@
     }
     .sub-title {
         text-align: center;
+    }
+    .show-more {
+
     }
 </style>
