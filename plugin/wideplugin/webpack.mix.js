@@ -13,6 +13,19 @@ let mix = require('laravel-mix');
 
 mix.js('src/app.js', 'dist/').sass('src/app.scss', 'dist/');
 
+mix.webpackConfig({
+    devtool: '#source-map'
+});
+
+// mix.webpackConfig({
+//     devtool = '#source-map'
+//     watchOptions: {
+//       aggregateTimeout: 2000,
+//       poll: 2000,
+//       ignored: /node_modules/
+//     }
+//   });
+
 // Full API
 // mix.js(src, output);
 // mix.react(src, output); <-- Identical to mix.js(), but registers React Babel compilation.
@@ -32,7 +45,7 @@ mix.js('src/app.js', 'dist/').sass('src/app.scss', 'dist/');
 // mix.copy(from, to);
 // mix.copyDirectory(fromDir, toDir);
 // mix.minify(file);
-// mix.sourceMaps(); // Enable sourcemaps
+mix.sourceMaps(); // Enable sourcemaps
 // mix.version(); // Enable versioning.
 // mix.disableNotifications();
 // mix.setPublicPath('path/to/public');
