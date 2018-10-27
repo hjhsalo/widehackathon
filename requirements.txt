@@ -7,4 +7,4 @@ annif-client==0.2.5
 finna-client==0.1.2
 skosmos-client==0.2.0
 youtube-dl==2017.11.15
-
+feedparser==5.2.1

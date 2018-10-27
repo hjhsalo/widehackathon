@@ -18,6 +18,8 @@ import youtube_dl
 import requests
 
 
+from .arxivreader import search as _search_arxiv
+
 _logger = logging.getLogger(__name__)
 
 
@@ -76,7 +78,7 @@ def _get_keywords_from_annif(payload):
     return keywords
 
 
-def _search_datasets(keywords):
+def _search_doaj(keywords):
     # finna = FinnaClient()
     # results = finna.search(', '.join(keywords), limit=5)
     # query = 'bibjson.journal.title:"Journal of Science"'
@@ -186,7 +188,10 @@ def search(request):
         # return JsonResponse({ 'message': 'Received data is not valid json' }, status=500)
 
     # import ipdb; ipdb.set_trace()
-    results = _search_datasets(keywords)
+    results = []
+    # results.extend(_search_doaj(keywords))
+    results.extend(_search_arxiv(keywords))
+
     # from pprint import pprint
     # pprint(results)
 
