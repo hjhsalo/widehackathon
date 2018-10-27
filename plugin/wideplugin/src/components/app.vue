@@ -1,13 +1,41 @@
 <template>
     <div id="popup-content">
-        <button  class="scrape pure-button-primary">Scrape</button>
-        <div v-if="showKeywordsLoading" id="keywords-title" class="sub-title">Loading ...</div>
-        <div id="keywords-title" class="sub-title hidden">Keywords:</div>
-        <ul v-if="showKeywords">
-            <li class="generic-list" v-for="kw in keywords">
-                {{ kw }}
-            </li>
-        </ul>    
+        <div class="pure-form pure-form-stacked">
+        <fieldset>
+            <!-- <legend>Search</legend> -->
+            <div class="pure-g">
+                <div class="pure-u-2-24"></div>
+                <div class="pure-u-3-24 l-box icon"> ... </div>
+                <div class="pure-u-2-24"></div>
+                <div class="pure-u-14-24 l-box scrape pure-button pure-button-primary"> Scrape </div>
+            </div>
+            <div id="keywords-title" class="sub-title hidden">Keywords:</div>
+            <div id="keywords-list" v-for="kw in keywords">
+                <input id="selected_kw" type="checkbox"> {{ kw }}
+            </div>
+            <!-- <ul v-if="showKeywords">
+                <li class="pure-checkbox" v-for="kw in keywords">
+                <input id="remember" type="checkbox"> {{ kw }}
+                </li>
+            </ul> -->
+            <!-- <span class="pure-form-message">This is a required field.</span> -->
+        </fieldset>
+        </div>
+        <div class="pure-form pure-form-stacked">
+        <fieldset>
+            <div class="pure-g">
+                <div class="pure-u-2-24"></div>
+                <div class="pure-u-3-24 l-box icon"> ... </div>
+                <div class="pure-u-2-24"></div>
+                <div class="pure-u-14-24 search pure-button pure-button-primary">Search</div>
+            </div>
+            <div id="datasets-title" class="sub-title hidden">Results:</div>
+            <div id="dataset-list" v-for="res in searchResults">
+                <input id="remember" type="checkbox"> {{ res.url }}
+            </div>
+        </fieldset>
+        </div>
+
         <button class="search pure-button-primary">Search</button>
         <div v-if="showSearchLoading" id="keywords-title" class="sub-title">Loading ...</div>
         <div id="datasets-title" class="sub-title hidden">Results:</div>
@@ -21,10 +49,12 @@
                 <hr />
             </li>
         </ul>
+        
         <div v-show="totalResponseCount" class="button show-more">Show more results</div>
         <div id="error-content" class="hidden">
             <p>Can't execute content script on this page. Check extension configuration.</p>
         </div>
+
     </div>
 </template>
 
@@ -177,4 +207,16 @@
         padding: 1em;
     }
 
+    .pure-button {
+        /* background-color: #1f8dd6; */
+        /* color: white; */
+        padding: 0.5em 2em;
+        border-radius: 5px;
+    }
+    a.pure-button-primary {
+        /* background: white; */
+        /* color: #1f8dd6; */
+        border-radius: 5px;
+        font-size: 120%;
+    }
 </style>

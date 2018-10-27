@@ -14,8 +14,14 @@ let mix = require('laravel-mix');
 mix.js('src/app.js', 'dist/').sass('src/app.scss', 'dist/');
 
 mix.webpackConfig({
-    devtool: '#source-map'
-});
+    watchOptions: {
+      poll: true
+    }
+  });
+
+// mix.webpackConfig({
+//     devtool: '#source-map'
+// });
 
 // mix.webpackConfig({
 //     devtool = '#source-map'
@@ -45,7 +51,7 @@ mix.webpackConfig({
 // mix.copy(from, to);
 // mix.copyDirectory(fromDir, toDir);
 // mix.minify(file);
-mix.sourceMaps(); // Enable sourcemaps
+// mix.sourceMaps(); // Enable sourcemaps
 // mix.version(); // Enable versioning.
 // mix.disableNotifications();
 // mix.setPublicPath('path/to/public');
