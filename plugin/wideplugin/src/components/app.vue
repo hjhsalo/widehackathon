@@ -1,30 +1,70 @@
 <template>
     <div id="popup-content">
-        <div class="button scrape">Scrape</div>
-        <div v-if="showKeywordsLoading" id="keywords-title" class="sub-title">Loading ...</div>
-        <div id="keywords-title" class="sub-title hidden">Keywords:</div>
-        <ul v-if="showKeywords">
-            <li class="generic-list" v-for="kw in keywords">
-                {{ kw }}
-            </li>
-        </ul>
-        <div class="button search">Search</div>
-        <div v-if="showSearchLoading" id="keywords-title" class="sub-title">Loading ...</div>
+        <div class="pure-form pure-form-stacked">
+        <fieldset>
+            <div class="pure-g">
+                <div class="pure-u-5-24"></div>
+                <div class="pure-u-14-24 l-box scrape pure-button pure-button-primary"> Scrape </div>
+                <div class="pure-u-5-24"></div>
+            </div>
+            <div v-if="showKeywordsLoading" class="sub-title">Loading ...</div>
+            <div v-if="showKeywords">
+            <div id="keywords-title" class="sub-title hidden">Keywords:</div>
+            <form class="pure-form">
+            <div id="keywords-list" v-for="kw in keywords">
+                <label for="selected-keyword" class="pure-checkbox">
+                    <input id="selected-keyword" type="checkbox" value="">
+                    {{ kw }}
+                </label>
+            </div>
+            </form>
+            </div>
+        </fieldset>
+        </div>
+        
+        <div class="pure-form pure-form-stacked">
+        <fieldset>
+            <div class="pure-g">
+                <div class="pure-u-5-24"></div>
+                <div class="pure-u-14-24 search pure-button pure-button-primary">Search</div>
+                <div class="pure-u-5-24"></div>
+            </div>
+            <div v-if="showSearchResults">
+                <div id="datasets-title" class="sub-title hidden">Sources:</div>
+                <div id="dataset-list" v-for="source in uniqueSources">
+                    <label for="selected-keyword" class="pure-checkbox">
+                        <input id="selected-keyword" type="checkbox" value="">
+                        {{ source }}
+                    </label>
+                </div>
+            </div>
+        </fieldset>
+        </div>
+
+        <div v-if="showSearchLoading" class="sub-title">Loading ...</div>
+        <div v-if="showSearchResults">
         <div id="datasets-title" class="sub-title hidden">Results:</div>
-        <ul v-if="showSearchResults">
-            <li v-for="res in searchResults.datasets">
+            <div v-for="res in searchResults.datasets">
                 <div><strong>Title: </strong>{{ res.title }}</div>
                 <div><strong>Abstract: </strong>{{ res.abstract.substr(0, 100) }}</div>
+                <div><strong>Source: </strong>{{ res.source }}</div>
                 <template v-for="link in res.links">
                     <div><strong>URL: </strong><a v-bind:href="link">{{ link }}</a></div>
                 </template>
                 <hr />
-            </li>
-        </ul>
-        <div v-show="totalResponseCount" class="button show-more">Show more results</div>
+            </div>
+        </div>
+        
+        <!-- <div v-show="totalResponseCount" class="button show-more">Show more results</div> -->
+        <div v-show="totalResponseCount" class="pure-g">
+                <div class="pure-u-5-24"></div>
+                <div class="pure-u-14-24 l-box show-more pure-button pure-button-primary"> Show more </div>
+                <div class="pure-u-5-24"></div>
+            </div>
         <div id="error-content" class="hidden">
             <p>Can't execute content script on this page. Check extension configuration.</p>
         </div>
+
     </div>
 </template>
 
@@ -44,6 +84,21 @@
                 totalResponseCount: null,
                 showKeywordsLoading: false,
                 showSearchLoading: false,
+            }
+        },
+        computed: {
+            uniqueSources: function() {
+            var sources   = [];
+
+            this.searchResults.datasets.forEach(function (res) {
+                var source = res.source;
+
+                if (sources.indexOf(source) === -1) {
+                    sources.push(source);
+                }
+            });
+
+            return sources;
             }
         },
         methods: {
@@ -163,7 +218,32 @@
     .sub-title {
         text-align: center;
     }
+
     .show-more {
 
     }
+
+    .pure-g > div {
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+    }
+    .l-box {
+        padding: 1em;
+    }
+
+    .pure-button {
+        /* background-color: #1f8dd6; */
+        /* color: white; */
+        padding: 0.5em 2em;
+        border-radius: 5px;
+    }
+
+    .pure-button-primary {
+        /* background: white; */
+        /* color: #1f8dd6; */
+        border-radius: 5px;
+        font-size: 120%;
+    }
+
 </style>
