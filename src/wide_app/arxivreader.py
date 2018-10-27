@@ -131,7 +131,8 @@ def search(query_words, start=0, max_results=50, sortBy='relevance', sortOrder='
             'links': [
                 abslink
             ],
-            'comments' : comment
+            'comments' : comment,
+            'source': 'arxiv'
         }
         articles.append(element)
 

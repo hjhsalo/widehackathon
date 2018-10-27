@@ -11,6 +11,8 @@
             {% verbatim %}
             <div id="popup-content">
 
+                <h1 style="text-align: center; text-decoration: underline">Title</h1>
+
                 <textarea style="width: 100%; height: 5em" v-model="scrapeInput" placeholder="You can also paste text here. In practice acts as a wrapper for annif."></textarea>
                 <div class="button scrape">Scrape from text area</div>
 
@@ -36,9 +38,11 @@
                     <li v-for="res in searchResults.datasets">
                         <div><strong>Title: </strong>{{ res.title }}</div>
                         <div><strong>Abstract: </strong>{{ res.abstract }}</div>
+                        <div><strong>Source: </strong>{{ res.source }}</div>
                         <template v-for="link in res.links">
                             <div><strong>URL: </strong><a v-bind:href="link">{{ link }}</a></div>
                         </template>
+                        <div v-on:click="scrapeAbstract(res.abstract)" class="scrape-abstract">Scrape keywords from abstract</div>
                         <hr />
                     </li>
                 </ul>

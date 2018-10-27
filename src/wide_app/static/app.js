@@ -20,7 +20,6 @@ var app = new Vue({
     methods: {
         scrape: function(tabs) {
             console.log('SCRAPING !');
-            console.log(this.keywords);
             var vm = this;
             vm.showKeywords = false;
             vm.showSearchResults = false;
@@ -40,7 +39,6 @@ var app = new Vue({
 
         scrapeYoutube: function(tabs) {
             console.log('SCRAPING !');
-            console.log(this.keywords);
             var vm = this;
             vm.showKeywords = false;
             vm.showSearchResults = false;
@@ -52,6 +50,24 @@ var app = new Vue({
                 console.log(response);
                 vm.keywords = response.body.keywords;
                 vm.showKeywords = true;
+            }, response => {
+                console.log('fffffffffff');
+                console.log(response);
+            });
+        },
+
+        scrapeAbstract: function(abstract) {
+            console.log('SCRAPING !');
+            var vm = this;
+            // vm.showKeywords = false;
+            // vm.showSearchResults = false;
+            this.$http.post('/scrape', { content: abstract }).then(response => {
+                console.log('scrape ok');
+                console.log(response);
+                vm.keywords = response.body.keywords;
+                console.log(window.location.host);
+                console.log(window.location.hostname);
+                window.location.href = 'http://localhost:8000/?keywords=' + vm.keywords.join(',');
             }, response => {
                 console.log('fffffffffff');
                 console.log(response);
@@ -73,6 +89,7 @@ var app = new Vue({
                 console.log(response);
             });
         },
+
         uploadFile: function(tabs) {
             var vm = this;
 
