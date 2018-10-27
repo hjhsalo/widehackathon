@@ -1,14 +1,14 @@
 <template>
     <div id="popup-content">
-        <div class="button scrape">Scrape</div>
+        <button  class="scrape pure-button-primary">Scrape</button>
         <div v-if="showKeywordsLoading" id="keywords-title" class="sub-title">Loading ...</div>
         <div id="keywords-title" class="sub-title hidden">Keywords:</div>
         <ul v-if="showKeywords">
             <li class="generic-list" v-for="kw in keywords">
                 {{ kw }}
             </li>
-        </ul>
-        <div class="button search">Search</div>
+        </ul>    
+        <button class="search pure-button-primary">Search</button>
         <div v-if="showSearchLoading" id="keywords-title" class="sub-title">Loading ...</div>
         <div id="datasets-title" class="sub-title hidden">Results:</div>
         <ul v-if="showSearchResults">
@@ -163,7 +163,18 @@
     .sub-title {
         text-align: center;
     }
+
     .show-more {
 
     }
+
+    .pure-g > div {
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+    }
+    .l-box {
+        padding: 1em;
+    }
+
 </style>
