@@ -31,3 +31,12 @@
 h2 {
     text-align: center;
 }
+
+.scrape-abstract {
+    text-align: right;
+    cursor: pointer;
+}
+
+.scrape-abstract:hover {
+    text-decoration: underline
+}

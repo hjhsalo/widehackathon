@@ -123,6 +123,7 @@ def _search_doaj(keywords):
             'title': res['bibjson']['title'],
             'abstract': abstract if len(abstract) < ABSTRACT_MAX_LEN else '%s...' % abstract[:ABSTRACT_MAX_LEN],
             'links': [ l['url'] for l in res['bibjson']['link'] ],
+            'source': 'doaj'
         })
 
     # filter/priorize duplicates here
