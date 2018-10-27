@@ -18,13 +18,14 @@ import youtube_dl
 import requests
 
 
-from .arxivreader import search as _search_arxiv
+from .arxivreader import search as search_arxiv
+from .finna_search import finna_search
 
 _logger = logging.getLogger(__name__)
 
 
 # truncate abstracts longer than this
-ABSTRACT_MAX_LEN = 200
+ABSTRACT_MAX_LEN = 1000
 
 codec = 'flac'
 
@@ -188,14 +189,15 @@ def search(request):
         # return JsonResponse({ 'message': 'Received data is not valid json' }, status=500)
 
     # import ipdb; ipdb.set_trace()
-    results = []
-    # results.extend(_search_doaj(keywords))
-    results.extend(_search_arxiv(keywords))
+    dataset_results = []
+    dataset_results.extend(search_arxiv(keywords)[:5])
+    dataset_results.extend(_search_doaj(keywords)[:5])
 
+    finna_results = finna_search(keywords)
     # from pprint import pprint
     # pprint(results)
 
-    return JsonResponse({ 'results': results })
+    return JsonResponse({ 'results': { 'datasets': dataset_results, 'finna': finna_results }})
 
 def _audio_to_text(file):
     if not settings.IBM_SPEECH_TO_TEXT_CREDENTIALS:

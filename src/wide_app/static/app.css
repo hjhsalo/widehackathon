@@ -23,8 +23,11 @@
 }
 .upload-file {
     text-align: center;
-    width: 10em;
     cursor: pointer;
     border: 1px solid black;
     padding: 3px;
+}
+
+h2 {
+    text-align: center;
 }

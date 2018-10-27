@@ -10,32 +10,44 @@
         <div id="app" class="w3-container">
             {% verbatim %}
             <div id="popup-content">
+
                 <textarea style="width: 100%; height: 5em" v-model="scrapeInput" placeholder="You can also paste text here. In practice acts as a wrapper for annif."></textarea>
+                <div class="button scrape">Scrape from text area</div>
+
 
                 <form method="post" enctype="multipart/form-data">
                     <input type="file" name="files[]" multiple>
-                    <div class="upload-file">Upload file</div>
+                    <div class="button upload-file">Scrape from uploaded audio file</div>
                 </form>
 
                 <input v-model="youtubeLink" placeholder="Youtube link">
-                <div class="scrape-youtube">Scrape youtube link</div>
+                <div class="button scrape-youtube">Scrape audio from youtube link</div>
 
-                <div class="button scrape">Scrape</div>
                 <div id="keywords-title" class="sub-title hidden">Keywords:</div>
                 <ul v-if="showKeywords">
                     <li v-for="kw in keywords">
                         {{ kw }}
                     </li>
                 </ul>
-                <div class="button search">Search</div>
+                <div class="button search">Search stuff using keywords</div>
                 <div id="datasets-title" class="sub-title hidden">Results:</div>
+                <h2 v-if="showSearchResults">Datasets</h2>
                 <ul v-if="showSearchResults">
-                    <li v-for="res in searchResults">
+                    <li v-for="res in searchResults.datasets">
                         <div><strong>Title: </strong>{{ res.title }}</div>
                         <div><strong>Abstract: </strong>{{ res.abstract }}</div>
                         <template v-for="link in res.links">
-                            <div><strong>URL: </strong>{{ link }}</div>
+                            <div><strong>URL: </strong><a v-bind:href="link">{{ link }}</a></div>
                         </template>
+                        <hr />
+                    </li>
+                </ul>
+                <h2 v-if="showSearchResults">Finna</h2>
+                <ul v-if="showSearchResults">
+                    <li v-for="res in searchResults.finna">
+                        <div><strong>Title: </strong>{{ res.title }}</div>
+                        <div><strong>Format: </strong>{{ res.formats[0].translated }}</div>
+                        <div><strong>URL: </strong><a v-bind:href="res.url">{{ res.url }}</a></div>
                         <hr />
                     </li>
                 </ul>
