@@ -137,8 +137,8 @@ def search(query_words, start=0, max_results=50, sortBy='relevance', sortOrder='
         articles.append(element)
 
         # DEBUG
-        print(element)
-        print('---------------------------------------------------------')
+        # print(element)
+        # print('---------------------------------------------------------')
 
     return articles
 

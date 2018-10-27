@@ -119,12 +119,16 @@ def _search_doaj(keywords):
 
     for res in normalized:
         abstract = res['bibjson'].get('abstract', 'n/a')
-        processed_results.append({
+        entry = {
             'title': res['bibjson']['title'],
             'abstract': abstract if len(abstract) < ABSTRACT_MAX_LEN else '%s...' % abstract[:ABSTRACT_MAX_LEN],
-            'links': [ l['url'] for l in res['bibjson']['link'] ],
             'source': 'doaj'
-        })
+        }
+        try:
+            entry['links'] = [ l['url'] for l in res['bibjson']['link'] ]
+        except:
+            entry['links'] = []
+        processed_results.append(entry)
 
     # filter/priorize duplicates here
 
@@ -192,12 +196,13 @@ def search(request):
         return JsonResponse({ 'results': [] })
 
     # try:
-    keywords = json.loads(request.body.decode('utf-8'))
+    keywords = json.loads(request.body.decode('utf-8'))['content']
     # except json.decoder.JSONDecodeError:
         # return JsonResponse({ 'message': 'Received data is not valid json' }, status=500)
 
     # import ipdb; ipdb.set_trace()
     dataset_results = []
+    # import ipdb; ipdb.set_trace()
     dataset_results.extend(search_arxiv(keywords)[:5])
     dataset_results.extend(_search_doaj(keywords)[:5])
 
