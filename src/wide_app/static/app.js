@@ -1,8 +1,11 @@
+
+var text = 'A robot may not injure a human being or, through inaction, allow a human being to come to harm. A robot must obey the orders given it by human beings except where such orders would conflict with the First Law.A robot must protect its own existence as long as such protection does not conflict with the First or Second Laws'
+
 var app = new Vue({
     el: '#app',
-    // delimiters: ['${', '}'],
     data () {
         return {
+            scrapeInput: null,
             keywords: [],
             searchResults: [],
             annifSources: [],
@@ -11,7 +14,6 @@ var app = new Vue({
             publishedEtartDate: null,
             showKeywords: false,
             showSearchResults: false,
-            hello: 'hellllo'
         }
     },
     methods: {
@@ -21,7 +23,10 @@ var app = new Vue({
             var vm = this;
             vm.showKeywords = false;
             vm.showSearchResults = false;
-            this.$http.post('/scrape', { content: document.body.innerHTML }).then(response => {
+            if (!vm.scrapeInput) {
+                vm.scrapeInput = text;
+            }
+            this.$http.post('/scrape', { content: vm.scrapeInput }).then(response => {
                 console.log('scrape ok');
                 console.log(response);
                 vm.keywords = response.body.keywords;
@@ -69,5 +74,14 @@ var app = new Vue({
     created () { 
         console.log('app created()...');
         this.listenForClicks();
+        var urlParams = new URLSearchParams(window.location.search);
+        console.log(urlParams);
+        var keywords = urlParams.get('keywords');
+        console.log(keywords);
+        if (keywords) {
+            this.keywords = keywords.split(',');
+            this.showKeywords = true;
+            this.searchDatasets();
+        }
     }
 })

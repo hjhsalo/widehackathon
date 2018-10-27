@@ -38,7 +38,7 @@ def handle_errors():
 def _get_keywords_from_annif(payload):
     annif = AnnifClient()
     try:
-        results = annif.analyze(project_id='yso-en', text="The quick brown fox", limit=5)
+        results = annif.analyze(project_id='yso-en', text=payload, limit=5)
     except:
         _logger.exception('Could not connect to annif')
         raise Exception('Could not connect to annif')
@@ -88,6 +88,9 @@ def _search_datasets(keywords):
             'abstract': abstract if len(abstract) < ABSTRACT_MAX_LEN else '%s...' % abstract[:ABSTRACT_MAX_LEN],
             'links': [ l['url'] for l in res['bibjson']['link'] ],
         })
+
+    # filter/priorize duplicates here
+
     return processed_results
 
 
@@ -112,7 +115,7 @@ def scrape(request):
     except:
         return JsonResponse({ 'message': 'Received data is not valid json' }, status=500)
 
-    keywords = _get_keywords_from_annif(request_data)
+    keywords = _get_keywords_from_annif(request_data['content'])
 
     return JsonResponse({ 'keywords': keywords })
 

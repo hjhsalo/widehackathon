@@ -10,6 +10,7 @@
         <div id="app" class="w3-container">
             {% verbatim %}
             <div id="popup-content">
+                <textarea style="width: 100%; height: 5em" v-model="scrapeInput" placeholder="Add text to scrape here"></textarea>
                 <div class="button scrape">Scrape</div>
                 <div id="keywords-title" class="sub-title hidden">Keywords:</div>
                 <ul v-if="showKeywords">

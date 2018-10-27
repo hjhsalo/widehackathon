@@ -2,7 +2,7 @@
 src/wide_app/secrets.py
 src/wide_app.log
 plugin/wideplugin/node_modules/
-
+package-lock.json
 
 
 # default
