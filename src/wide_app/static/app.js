@@ -17,6 +17,7 @@ var app = new Vue({
             youtubeLink: null,
             showKeywordsLoading: false,
             showSearchLoading: false,
+            recursionLevel: 0
         }
     },
     methods: {
@@ -64,7 +65,7 @@ var app = new Vue({
             });
         },
 
-        scrapeAbstract: function(abstract) {
+        scrapeAbstract: function(abstract, recursionLevel) {
             console.log('SCRAPING !');
             var vm = this;
             // vm.showKeywords = false;
@@ -75,7 +76,7 @@ var app = new Vue({
                 vm.keywords = response.body.keywords;
                 console.log(window.location.host);
                 console.log(window.location.hostname);
-                window.location.href = 'http://localhost:8000/?keywords=' + vm.keywords.join(',');
+                window.location.href = 'http://localhost:8000/?keywords=' + vm.keywords.join(',') + '&recursion=' + (recursionLevel + 1);
             }, response => {
                 console.log('fffffffffff');
                 console.log(response);
@@ -157,11 +158,15 @@ var app = new Vue({
         var urlParams = new URLSearchParams(window.location.search);
         console.log(urlParams);
         var keywords = urlParams.get('keywords');
+        var recursionLevel = urlParams.get('recursion');
         console.log(keywords);
         if (keywords) {
             this.keywords = keywords.split(',');
             this.showKeywords = true;
             this.searchDatasets();
+        }
+        if (recursionLevel) {
+            this.recursionLevel = parseInt(recursionLevel);
         }
     }
 })

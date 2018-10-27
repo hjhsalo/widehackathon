@@ -35,6 +35,7 @@
                 <div class="button search">Search stuff using keywords</div>
                 <div v-if="showSearchLoading" id="keywords-title" class="sub-title">Loading ...</div>
                 <div id="datasets-title" class="sub-title hidden">Results:</div>
+                <h3 v-if="recursionLevel" style="text-align: center">Recursion level: {{ recursionLevel }}</h2>
                 <h2 v-if="showSearchResults">Datasets</h2>
                 <ul v-if="showSearchResults">
                     <li v-for="res in searchResults.datasets">
@@ -44,7 +45,7 @@
                         <template v-for="link in res.links">
                             <div><strong>URL: </strong><a v-bind:href="link">{{ link }}</a></div>
                         </template>
-                        <div v-on:click="scrapeAbstract(res.abstract)" class="scrape-abstract">Scrape keywords from abstract</div>
+                        <div v-on:click="scrapeAbstract(res.abstract, recursionLevel)" class="scrape-abstract">Scrape keywords from abstract</div>
                         <hr />
                     </li>
                 </ul>
