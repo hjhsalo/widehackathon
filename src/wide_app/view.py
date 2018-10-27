@@ -1,15 +1,20 @@
 
+
 from functools import wraps
+import glob
 import json
 import logging
+import os
+import shutil
 
 from annif_client import AnnifClient
-from finna_client import FinnaClient
 from django.core.files.base import ContentFile
+from django.conf import settings
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 from django.views.generic import TemplateView
 from django.shortcuts import render
+import youtube_dl
 import requests
 
 
@@ -19,21 +24,44 @@ _logger = logging.getLogger(__name__)
 # truncate abstracts longer than this
 ABSTRACT_MAX_LEN = 200
 
+codec = 'flac'
 
-def handle_errors():
-    """
-    A decorator which catches all unhandled exceptions, wraps the error message
-    into a json http response, and returns it to the client.
-    """
-    def catch_errors(func):
-        @wraps(func)
-        def func_wrapper(*args, **kwargs):
-            try:
-                return func(*args, **kwargs)
-            except Exception as e:
-                return JsonResponse({ 'message': str(e) }, status=500)
-        return func_wrapper
-    return catch_errors
+ydl_opts = {
+    'format': 'bestaudio/best',
+    'postprocessors': [{
+        'key': 'FFmpegExtractAudio',
+        'preferredcodec': codec,
+        'preferredquality': '192',
+    }],
+}
+
+
+def _download_youtube(link):
+
+    ydl_opts = {
+        'format': 'bestaudio/best',
+        'postprocessors': [{
+            'key': 'FFmpegExtractAudio',
+            'preferredcodec': codec,
+            'preferredquality': '192',
+        }],
+    }
+
+    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+        # ydl.download(['http://www.youtube.com/watch?v=BaW_jenozKc'])
+        ydl.download([link])
+
+    video_suffix = '%s.%s' % (link.split('watch?v=')[1], codec)
+    src_dir = os.path.dirname(os.path.dirname(__file__))
+
+    # import ipdb; ipdb.set_trace()
+    files_in_dir = glob.glob('%s/*.flac' % src_dir)
+    for file in files_in_dir:
+        if file.endswith(video_suffix):
+            dest_file = '%s/%s/%s' % (src_dir, settings.YOUTUBE_DIR, os.path.basename(file))
+            shutil.move(file, dest_file)
+            break
+    return dest_file
 
 
 def _get_keywords_from_annif(payload):
@@ -76,13 +104,17 @@ def _search_datasets(keywords):
             response = requests.get('https://doaj.org/api/v1/search/articles/%s?pageSize=10' % query)
             results.extend(response.json()['results'])
 
-    with open('out', 'w') as f:
-        import json
-        json.dump(results, f)
+    # with open('out', 'w') as f:
+    #     import json
+    #     json.dump(results, f)
 
+    normalized = []
+    for res in results:
+        if res not in normalized:
+            normalized.append(res)
     processed_results = []
 
-    for res in results:
+    for res in normalized:
         abstract = res['bibjson'].get('abstract', 'n/a')
         processed_results.append({
             'title': res['bibjson']['title'],
@@ -95,14 +127,24 @@ def _search_datasets(keywords):
     return processed_results
 
 
-# @handle_errors()
+def _scrape_youtube(link):
+    try:
+        os.makedirs(settings.YOUTUBE_DIR)
+    except:
+        pass
+
+    dest_file = _download_youtube(link)
+    with open(dest_file, 'rb') as f:
+        text = _audio_to_text(f.read())
+    return text
+
+
 @require_http_methods(["GET"])
 def hello(request):
     _logger.info('-- hello called --')
     return JsonResponse({'msg': 'hello'})
 
 
-# @handle_errors()
 @require_http_methods(["POST"])
 def scrape(request):
     _logger.info('-- scrape called --')
@@ -116,12 +158,20 @@ def scrape(request):
     except:
         return JsonResponse({ 'message': 'Received data is not valid json' }, status=500)
 
-    keywords = _get_keywords_from_annif(request_data['content'])
+    if 'youtube' in request_data and 'link' in request_data:
+        text = _scrape_youtube(request_data['link'])
+    else:
+        text = request_data['content']
+
+    if text:
+        keywords = _get_keywords_from_annif(text)
+    else:
+        keywords = ['no results']
+
 
     return JsonResponse({ 'keywords': keywords })
 
 
-# @handle_errors()
 @require_http_methods(["POST"])
 def search(request):
     _logger.info('-- search called --')
@@ -131,26 +181,50 @@ def search(request):
         return JsonResponse({ 'results': [] })
 
     # try:
-    request_data = json.loads(request.body.decode('utf-8'))
+    keywords = json.loads(request.body.decode('utf-8'))
     # except json.decoder.JSONDecodeError:
         # return JsonResponse({ 'message': 'Received data is not valid json' }, status=500)
 
     # import ipdb; ipdb.set_trace()
-    results = _search_datasets(request_data)
-    from pprint import pprint
-    pprint(results)
+    results = _search_datasets(keywords)
+    # from pprint import pprint
+    # pprint(results)
 
     return JsonResponse({ 'results': results })
+
+def _audio_to_text(file):
+    if not settings.IBM_SPEECH_TO_TEXT_CREDENTIALS:
+        raise Exception('IBM_SPEECH_TO_TEXT_CREDENTIALS not specifiec is secrets')
+
+    response = requests.post('https://stream.watsonplatform.net/speech-to-text/api/v1/recognize',
+        auth=settings.IBM_SPEECH_TO_TEXT_CREDENTIALS,
+        data=file,
+        headers={
+            'Content-Type': 'audio/flac'
+        }
+    )
+    result = response.json()
+    try:
+        transcript = result['results'][0]['alternatives'][0]['transcript']
+    except:
+        transcript = None
+    print(transcript)
+    return transcript
 
 
 @require_http_methods(["POST"])
 def upload(request):
     _logger.info('-- upload called --')
-    # f = ContentFile(request.FILES['files[]'].read()).read()
+    # import ipdb; ipdb.set_trace()
+    f = ContentFile(request.FILES['files[]'].read()).read()
     # if text content
     # f = ContentFile(request.FILES['files[]'].read()).read().decode('utf-8')
-    return JsonResponse({ 'results': [] })
-
+    text = _audio_to_text(f)
+    if text:
+        keywords = _get_keywords_from_annif(text)
+    else:
+        keywords = 'n/a'
+    return JsonResponse({ 'keywords': keywords })
 
 
 class IndexView(TemplateView):

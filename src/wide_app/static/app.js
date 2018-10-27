@@ -14,6 +14,7 @@ var app = new Vue({
             publishedEtartDate: null,
             showKeywords: false,
             showSearchResults: false,
+            youtubeLink: null
         }
     },
     methods: {
@@ -24,7 +25,7 @@ var app = new Vue({
             vm.showKeywords = false;
             vm.showSearchResults = false;
             if (!vm.scrapeInput) {
-                vm.scrapeInput = text;
+                return;
             }
             this.$http.post('/scrape', { content: vm.scrapeInput }).then(response => {
                 console.log('scrape ok');
@@ -35,8 +36,26 @@ var app = new Vue({
                 console.log('fffffffffff');
                 console.log(response);
             });
+        },
 
-
+        scrapeYoutube: function(tabs) {
+            console.log('SCRAPING !');
+            console.log(this.keywords);
+            var vm = this;
+            vm.showKeywords = false;
+            vm.showSearchResults = false;
+            if (!vm.youtubeLink) {
+                return;
+            }
+            this.$http.post('/scrape', { youtube: true, link: vm.youtubeLink }).then(response => {
+                console.log('scrape ok');
+                console.log(response);
+                vm.keywords = response.body.keywords;
+                vm.showKeywords = true;
+            }, response => {
+                console.log('fffffffffff');
+                console.log(response);
+            });
         },
 
         searchDatasets: function(tabs) {
@@ -55,6 +74,8 @@ var app = new Vue({
             });
         },
         uploadFile: function(tabs) {
+            var vm = this;
+
             const files = document.querySelector('[type=file]').files;
             const formData = new FormData();
 
@@ -67,6 +88,8 @@ var app = new Vue({
             this.$http.post('/upload', formData).then(response => {
                 console.log('upload ok');
                 console.log(response);
+                vm.keywords = response.body.keywords;
+                vm.showKeywords = true;
             }, response => {
                 console.log('fffffffffff');
                 console.log(response);
@@ -83,6 +106,9 @@ var app = new Vue({
                 }
                 else if (e.target.classList.contains("upload-file")) {
                     this.uploadFile();
+                }
+                else if (e.target.classList.contains("scrape-youtube")) {
+                    this.scrapeYoutube();
                 }
             });
         },

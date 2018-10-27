@@ -17,6 +17,9 @@
                     <div class="upload-file">Upload file</div>
                 </form>
 
+                <input v-model="youtubeLink" placeholder="Youtube link">
+                <div class="scrape-youtube">Scrape youtube link</div>
+
                 <div class="button scrape">Scrape</div>
                 <div id="keywords-title" class="sub-title hidden">Keywords:</div>
                 <ul v-if="showKeywords">

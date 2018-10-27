@@ -37,6 +37,10 @@ DEBUG = secrets['DEBUG']
 
 ALLOWED_HOSTS = secrets['ALLOWED_HOSTS']
 
+IBM_SPEECH_TO_TEXT_CREDENTIALS = secrets.get('IBM_SPEECH_TO_TEXT_CREDENTIALS', None)
+
+YOUTUBE_DIR = 'youtube_downloads'
+
 
 # Application definition
 
