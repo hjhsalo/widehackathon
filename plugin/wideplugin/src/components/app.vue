@@ -1,6 +1,7 @@
 <template>
     <div id="popup-content">
         <div class="button scrape">Scrape</div>
+        <div v-if="showKeywordsLoading" id="keywords-title" class="sub-title">Loading ...</div>
         <div id="keywords-title" class="sub-title hidden">Keywords:</div>
         <ul v-if="showKeywords">
             <li class="generic-list" v-for="kw in keywords">
@@ -8,13 +9,14 @@
             </li>
         </ul>
         <div class="button search">Search</div>
+        <div v-if="showSearchLoading" id="keywords-title" class="sub-title">Loading ...</div>
         <div id="datasets-title" class="sub-title hidden">Results:</div>
         <ul v-if="showSearchResults">
-            <li v-for="res in searchResults">
+            <li v-for="res in searchResults.datasets">
                 <div><strong>Title: </strong>{{ res.title }}</div>
-                <div><strong>Abstract: </strong>{{ res.abstract }}</div>
+                <div><strong>Abstract: </strong>{{ res.abstract.substr(0, 100) }}</div>
                 <template v-for="link in res.links">
-                    <div><strong>URL: </strong>{{ link }}</div>
+                    <div><strong>URL: </strong><a v-bind:href="link">{{ link }}</a></div>
                 </template>
                 <hr />
             </li>
@@ -39,7 +41,9 @@
                 publishedEtartDate: null,
                 showKeywords: false,
                 showSearchResults: false,
-                totalResponseCount: null
+                totalResponseCount: null,
+                showKeywordsLoading: false,
+                showSearchLoading: false,
             }
         },
         methods: {
@@ -47,6 +51,7 @@
                 var vm = this;
                 vm.showKeywords = false;
                 vm.showSearchResults = false;
+                vm.showKeywordsLoading = true;
                 browser.tabs.sendMessage(
                     tabs[0].id,
                     { action: 'scrape' }
@@ -54,8 +59,10 @@
                     console.log("Message from the content script scrape:");
                     console.log(response);
                     vm.keywords = response.keywords;
+                    vm.showKeywordsLoading = false;
                     vm.showKeywords = true;
                 }).catch(function(err) {
+                    vm.showKeywordsLoading = false;
                     console.log('ffffffffff');
                     console.log(err);
                 });
@@ -66,16 +73,19 @@
                 // but for some reason http requests do not work from the background script.......
                 console.log('searching datasets...');
                 var vm = this;
+                vm.showSearchLoading = true;
                 browser.tabs.sendMessage(
                     tabs[0].id,
                     { action: 'search', keywords: vm.keywords }
                 ).then(response => {
                     console.log("Message from the content script search:");
                     console.log(response);
-                    vm.totalResponseCount = response.results.length
-                    vm.searchResults = response.results.slice(0, 5);
+                    vm.totalResponseCount = response.results.datasets.length
+                    vm.searchResults = response.results;
+                    vm.showSearchLoading = false;
                     vm.showSearchResults = true;
                 }).catch(function(err) {
+                    vm.showSearchLoading = false;
                     console.log('fffffffff');
                     console.log(err);
                 });
@@ -145,7 +155,7 @@
     }
     .popup-content {
         height: 20em;
-        width: 20em;
+            width: 20em;
     }
     .generic-list {
         text-align: center;
