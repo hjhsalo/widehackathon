@@ -28,30 +28,30 @@
                 <div v-if="showKeywordsLoading" id="keywords-title" class="sub-title">Loading ...</div>
                 <div id="keywords-title" class="sub-title hidden">Keywords:</div>
                 <ul v-if="showKeywords">
-                    <li v-for="kw in keywords">
+                    <li class="keywords" v-for="kw in keywords">
                         {{ kw }}
                     </li>
                 </ul>
                 <div class="button search">Search stuff using keywords</div>
                 <div v-if="showSearchLoading" id="keywords-title" class="sub-title">Loading ...</div>
                 <div id="datasets-title" class="sub-title hidden">Results:</div>
-                <h3 v-if="recursionLevel" style="text-align: center">Recursion level: {{ recursionLevel }}</h2>
+                <h3 v-if="recursionLevel" class="recursion-level">Recursion level: {{ recursionLevel }}</h2>
                 <h2 v-if="showSearchResults">Datasets</h2>
                 <ul v-if="showSearchResults">
-                    <li v-for="res in searchResults.datasets">
+                    <li class='search-result' v-for="res in searchResults.datasets">
                         <div><strong>Title: </strong>{{ res.title }}</div>
                         <div><strong>Abstract: </strong>{{ res.abstract }}</div>
                         <div><strong>Source: </strong>{{ res.source }}</div>
                         <template v-for="link in res.links">
                             <div><strong>URL: </strong><a v-bind:href="link">{{ link }}</a></div>
                         </template>
-                        <div v-on:click="scrapeAbstract(res.abstract, recursionLevel)" class="scrape-abstract">Scrape keywords from abstract</div>
+                        <div v-on:click="scrapeAbstract(res.abstract, recursionLevel)" class="scrape-abstract">Recursive scrape and search using abstract</div>
                         <hr />
                     </li>
                 </ul>
                 <h2 v-if="showSearchResults">Finna</h2>
                 <ul v-if="showSearchResults">
-                    <li v-for="res in searchResults.finna">
+                    <li class='search-result' v-for="res in searchResults.finna">
                         <div v-if="res.title"><strong>Title: </strong>{{ res.title }}</div>
                         <div v-if="res.formats"><strong>Format: </strong>{{ res.formats.translated }}</div>
                         <div v-if="res.url"><strong>URL: </strong><a v-bind:href="res.url">{{ res.url }}</a></div>
