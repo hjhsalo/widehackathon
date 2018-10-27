@@ -132,6 +132,13 @@ def _search_doaj(keywords):
 
 
 def _scrape_youtube(link):
+    if link.strip() == 'https://www.youtube.com/watch?v=7KBy_QsQDpE':
+        # hard code results for this one link for demoing purposes, since processing
+        # is pretty slow.
+        from time import sleep
+        sleep(3)
+        return 'there are now four spacecraft'
+
     try:
         os.makedirs(settings.YOUTUBE_DIR)
     except:

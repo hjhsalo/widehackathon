@@ -14,7 +14,9 @@ var app = new Vue({
             publishedEtartDate: null,
             showKeywords: false,
             showSearchResults: false,
-            youtubeLink: null
+            youtubeLink: null,
+            showKeywordsLoading: false,
+            showSearchLoading: false,
         }
     },
     methods: {
@@ -26,12 +28,15 @@ var app = new Vue({
             if (!vm.scrapeInput) {
                 return;
             }
+            vm.showKeywordsLoading = true;
             this.$http.post('/scrape', { content: vm.scrapeInput }).then(response => {
                 console.log('scrape ok');
                 console.log(response);
                 vm.keywords = response.body.keywords;
+                vm.showKeywordsLoading = false;
                 vm.showKeywords = true;
             }, response => {
+                vm.showKeywordsLoading = false;
                 console.log('fffffffffff');
                 console.log(response);
             });
@@ -45,12 +50,15 @@ var app = new Vue({
             if (!vm.youtubeLink) {
                 return;
             }
+            vm.showKeywordsLoading = true;
             this.$http.post('/scrape', { youtube: true, link: vm.youtubeLink }).then(response => {
                 console.log('scrape ok');
                 console.log(response);
                 vm.keywords = response.body.keywords;
+                vm.showKeywordsLoading = false;
                 vm.showKeywords = true;
             }, response => {
+                vm.showKeywordsLoading = false;
                 console.log('fffffffffff');
                 console.log(response);
             });
@@ -79,12 +87,16 @@ var app = new Vue({
             // but for some reason http requests do not work from the background script.......
             console.log('searching datasets...');
             var vm = this;
+            vm.showSearchResults = false;
+            vm.showSearchLoading = true;
             this.$http.post('/search', { content: vm.keywords }).then(response => {
                 console.log('search ok');
                 console.log(response);
                 vm.searchResults = response.body.results;
+                vm.showSearchLoading = false;
                 vm.showSearchResults = true;
             }, response => {
+                vm.showSearchLoading = false;
                 console.log('fffffffffff');
                 console.log(response);
             });
@@ -92,6 +104,8 @@ var app = new Vue({
 
         uploadFile: function(tabs) {
             var vm = this;
+            vm.showKeywords = false;
+            vm.showKeywordsLoading = true;
 
             const files = document.querySelector('[type=file]').files;
             const formData = new FormData();
@@ -106,8 +120,10 @@ var app = new Vue({
                 console.log('upload ok');
                 console.log(response);
                 vm.keywords = response.body.keywords;
+                vm.showKeywordsLoading = false;
                 vm.showKeywords = true;
             }, response => {
+                vm.showKeywordsLoading = false;
                 console.log('fffffffffff');
                 console.log(response);
             });

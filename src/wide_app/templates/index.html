@@ -11,20 +11,21 @@
             {% verbatim %}
             <div id="popup-content">
 
-                <h1 style="text-align: center; text-decoration: underline">Title</h1>
+                <h1 style="text-align: center; text-decoration: underline">Scrape-&#937;-Matic</h1>
 
                 <textarea style="width: 100%; height: 5em" v-model="scrapeInput" placeholder="You can also paste text here. In practice acts as a wrapper for annif."></textarea>
-                <div class="button scrape">Scrape from text area</div>
+                <div class="button scrape">Scrape keywords from text area</div>
 
 
                 <form method="post" enctype="multipart/form-data">
                     <input type="file" name="files[]" multiple>
-                    <div class="button upload-file">Scrape from uploaded audio file</div>
+                    <div class="button upload-file">Scrape keywords from uploaded audio file</div>
                 </form>
 
                 <input v-model="youtubeLink" placeholder="Youtube link">
-                <div class="button scrape-youtube">Scrape audio from youtube link</div>
+                <div class="button scrape-youtube">Scrape keywords from audio of youtube link</div>
 
+                <div v-if="showKeywordsLoading" id="keywords-title" class="sub-title">Loading ...</div>
                 <div id="keywords-title" class="sub-title hidden">Keywords:</div>
                 <ul v-if="showKeywords">
                     <li v-for="kw in keywords">
@@ -32,6 +33,7 @@
                     </li>
                 </ul>
                 <div class="button search">Search stuff using keywords</div>
+                <div v-if="showSearchLoading" id="keywords-title" class="sub-title">Loading ...</div>
                 <div id="datasets-title" class="sub-title hidden">Results:</div>
                 <h2 v-if="showSearchResults">Datasets</h2>
                 <ul v-if="showSearchResults">
