@@ -5,6 +5,7 @@ import logging
 
 from annif_client import AnnifClient
 from finna_client import FinnaClient
+from django.core.files.base import ContentFile
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 from django.views.generic import TemplateView
@@ -140,6 +141,16 @@ def search(request):
     pprint(results)
 
     return JsonResponse({ 'results': results })
+
+
+@require_http_methods(["POST"])
+def upload(request):
+    _logger.info('-- upload called --')
+    # f = ContentFile(request.FILES['files[]'].read()).read()
+    # if text content
+    # f = ContentFile(request.FILES['files[]'].read()).read().decode('utf-8')
+    return JsonResponse({ 'results': [] })
+
 
 
 class IndexView(TemplateView):

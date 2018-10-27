@@ -54,6 +54,24 @@ var app = new Vue({
                 console.log(response);
             });
         },
+        uploadFile: function(tabs) {
+            const files = document.querySelector('[type=file]').files;
+            const formData = new FormData();
+
+            for (let i = 0; i < files.length; i++) {
+                let file = files[i];
+
+                formData.append('files[]', file);
+            }
+
+            this.$http.post('/upload', formData).then(response => {
+                console.log('upload ok');
+                console.log(response);
+            }, response => {
+                console.log('fffffffffff');
+                console.log(response);
+            });
+        },
 
         listenForClicks: function() {
             document.addEventListener("click", (e) => {
@@ -62,6 +80,9 @@ var app = new Vue({
                 }
                 else if (e.target.classList.contains("search")) {
                     this.searchDatasets();
+                }
+                else if (e.target.classList.contains("upload-file")) {
+                    this.uploadFile();
                 }
             });
         },

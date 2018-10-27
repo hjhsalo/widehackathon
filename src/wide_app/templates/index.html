@@ -10,7 +10,13 @@
         <div id="app" class="w3-container">
             {% verbatim %}
             <div id="popup-content">
-                <textarea style="width: 100%; height: 5em" v-model="scrapeInput" placeholder="Add text to scrape here"></textarea>
+                <textarea style="width: 100%; height: 5em" v-model="scrapeInput" placeholder="You can also paste text here. In practice acts as a wrapper for annif."></textarea>
+
+                <form method="post" enctype="multipart/form-data">
+                    <input type="file" name="files[]" multiple>
+                    <div class="upload-file">Upload file</div>
+                </form>
+
                 <div class="button scrape">Scrape</div>
                 <div id="keywords-title" class="sub-title hidden">Keywords:</div>
                 <ul v-if="showKeywords">

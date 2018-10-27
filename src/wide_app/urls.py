@@ -17,12 +17,13 @@ from django.contrib import admin
 from django.urls import path
 from django.conf.urls import url
 
-from .view import hello, scrape, search, IndexView
+from .view import hello, scrape, upload, search, IndexView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     url(r'^hello$', hello),
     url(r'^scrape$', scrape),
     url(r'^search$', search),
+    url(r'^upload$', upload),
     url(r'^$', IndexView.as_view()),
 ]
