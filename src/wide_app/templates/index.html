@@ -45,7 +45,7 @@
                         <template v-for="link in res.links">
                             <div><strong>URL: </strong><a v-bind:href="link">{{ link }}</a></div>
                         </template>
-                        <div v-on:click="scrapeAbstract(res.abstract, recursionLevel)" class="scrape-abstract">Scrape keywords from abstract</div>
+                        <div v-on:click="scrapeAbstract(res.abstract, recursionLevel)" class="scrape-abstract">Recursive scrape and search using abstract</div>
                         <hr />
                     </li>
                 </ul>
