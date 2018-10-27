@@ -21,6 +21,10 @@ def finna_search(searchwords, filters = [], limit = 10):
     for item in res:
         if item not in results:
             item['url'] = "https://www.finna.fi/Record/"+item['id']
+            if 'formats' in item and len(item['formats']):
+                item['formats'] = item['formats'][0]
+            else:
+                item['formats'] = {'translated': ''}
             results.append(item)
     # from pprint import pprint
     # pprint(results[0])

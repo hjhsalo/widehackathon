@@ -51,9 +51,9 @@
                 <h2 v-if="showSearchResults">Finna</h2>
                 <ul v-if="showSearchResults">
                     <li v-for="res in searchResults.finna">
-                        <div><strong>Title: </strong>{{ res.title }}</div>
-                        <div><strong>Format: </strong>{{ res.formats[0].translated }}</div>
-                        <div><strong>URL: </strong><a v-bind:href="res.url">{{ res.url }}</a></div>
+                        <div v-if="res.title"><strong>Title: </strong>{{ res.title }}</div>
+                        <div v-if="res.formats"><strong>Format: </strong>{{ res.formats.translated }}</div>
+                        <div v-if="res.url"><strong>URL: </strong><a v-bind:href="res.url">{{ res.url }}</a></div>
                         <hr />
                     </li>
                 </ul>
