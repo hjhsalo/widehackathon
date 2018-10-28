@@ -8,7 +8,7 @@ The speech from audio/video is transribed to text.
 A plugin to scrape texts from websites is also provided.
 User can also do a recursive search based on obtained article abstracts .
 
-Check provided presentation.pdf for further information.
+Check provided wide_presentation.pdf for further information.
 
 ## Dependencies
 
