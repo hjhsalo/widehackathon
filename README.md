@@ -1,5 +1,5 @@
 # Scrape-O-Matic
-## introduction
+## Introduction
 
 A software to run Annif on various texts to produce relevant keywords
 and do a database search base on them.
@@ -8,11 +8,13 @@ The speech from audio/video is transribed to text.
 A plugin to scrape texts from websites is also provided.
 User can also do a recursive search based on obtained article abstracts .
 
-## dependencies
+Check provided presentation.pdf for further information.
+
+## Dependencies
 
 python >=3.5
 
-## installation
+## Installation
 
 	git clone https://github.com/hjhsalo/widehackathon
 	cd widehackathon
@@ -23,7 +25,7 @@ python >=3.5
 	# see secrets.py, and replace any temp values with proper values
 
 
-## running django dev server
+## Running django dev server
 
 In repository root:
 
