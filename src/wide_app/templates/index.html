@@ -29,14 +29,14 @@
                 <div id="keywords-title" class="sub-title hidden">Keywords:</div>
                 <ul v-if="showKeywords">
                     <li class="keywords" v-for="kw in keywords">
-                        {{ kw }}
+                        {{ kw.value }} <input type="checkbox" name="" v-model="kw.checked">
                     </li>
                 </ul>
                 <div class="button search">Search stuff using keywords</div>
                 <div v-if="showSearchLoading" id="keywords-title" class="sub-title">Loading ...</div>
                 <div id="datasets-title" class="sub-title hidden">Results:</div>
                 <h3 v-if="recursionLevel" class="recursion-level">Recursion level: {{ recursionLevel }}</h2>
-                <h2 v-if="showSearchResults">Datasets</h2>
+                <h2 v-if="showSearchResults">Articles / Datasets</h2>
                 <ul v-if="showSearchResults">
                     <li class='search-result' v-for="res in searchResults.datasets">
                         <div><strong>Title: </strong>{{ res.title }}</div>

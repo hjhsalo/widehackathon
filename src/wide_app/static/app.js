@@ -33,7 +33,12 @@ var app = new Vue({
             this.$http.post('/scrape', { content: vm.scrapeInput }).then(response => {
                 console.log('scrape ok');
                 console.log(response);
-                vm.keywords = response.body.keywords;
+                keywords = response.body.keywords;
+                vm.keywords = []
+                for (let kw of keywords) {
+                    item = { value: kw, checked: true};
+                    vm.keywords.push(item)
+                }
                 vm.showKeywordsLoading = false;
                 vm.showKeywords = true;
             }, response => {
@@ -55,7 +60,12 @@ var app = new Vue({
             this.$http.post('/scrape', { youtube: true, link: vm.youtubeLink }).then(response => {
                 console.log('scrape ok');
                 console.log(response);
-                vm.keywords = response.body.keywords;
+                keywords = response.body.keywords;
+                vm.keywords = []
+                for (let kw of keywords) {
+                    item = { value: kw, checked: true};
+                    vm.keywords.push(item)
+                }
                 vm.showKeywordsLoading = false;
                 vm.showKeywords = true;
             }, response => {
@@ -73,10 +83,15 @@ var app = new Vue({
             this.$http.post('/scrape', { content: abstract }).then(response => {
                 console.log('scrape ok');
                 console.log(response);
-                vm.keywords = response.body.keywords;
+                keywords = response.body.keywords;
+                vm.keywords = []
+                for (let kw of keywords) {
+                    item = { value: kw, checked: true};
+                    vm.keywords.push(item)
+                }
                 console.log(window.location.host);
                 console.log(window.location.hostname);
-                window.location.href = 'http://localhost:8000/?keywords=' + vm.keywords.join(',') + '&recursion=' + (recursionLevel + 1);
+                window.location.href = 'http://localhost:8000/?keywords=' + keywords.join(',') + '&recursion=' + (recursionLevel + 1);
             }, response => {
                 console.log('fffffffffff');
                 console.log(response);
@@ -90,7 +105,15 @@ var app = new Vue({
             var vm = this;
             vm.showSearchResults = false;
             vm.showSearchLoading = true;
-            this.$http.post('/search', { content: vm.keywords }).then(response => {
+            keywords = []
+
+            for (let kw in vm.keywords) {
+                console.log(kw);
+                if (vm.keywords[kw].checked) {
+                    keywords.push(vm.keywords[kw].value)
+                }
+            }
+            this.$http.post('/search', { content: keywords }).then(response => {
                 console.log('search ok');
                 console.log(response);
                 vm.searchResults = response.body.results;
@@ -120,7 +143,12 @@ var app = new Vue({
             this.$http.post('/upload', formData).then(response => {
                 console.log('upload ok');
                 console.log(response);
-                vm.keywords = response.body.keywords;
+                keywords = response.body.keywords;
+                vm.keywords = []
+                for (let kw of keywords) {
+                    item = { value: kw, checked: true};
+                    vm.keywords.push(item)
+                }
                 vm.showKeywordsLoading = false;
                 vm.showKeywords = true;
             }, response => {
@@ -161,7 +189,12 @@ var app = new Vue({
         var recursionLevel = urlParams.get('recursion');
         console.log(keywords);
         if (keywords) {
-            this.keywords = keywords.split(',');
+            keywords = keywords.split(',');
+            this.keywords = []
+            for (let kw of keywords) {
+                item = { value: kw, checked: true};
+                this.keywords.push(item)
+            }
             this.showKeywords = true;
             this.searchDatasets();
         }
