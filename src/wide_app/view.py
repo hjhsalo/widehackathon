@@ -75,7 +75,10 @@ def _get_keywords_from_annif(payload):
         _logger.exception('Could not connect to annif')
         raise Exception('Could not connect to annif')
 
-    keywords = [row['label'] for row in results]
+    keywords = [{'label':row['label'], 'score':row['score']} for row in results]
+    for row in results:
+        _logger.info(row)
+    _logger.info(keywords)
     return keywords
 
 

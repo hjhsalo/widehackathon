@@ -3,6 +3,7 @@
     <head>
         {% load static %}
         <meta charset="utf-8">
+        <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css" integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w" crossorigin="anonymous">
         <link rel="stylesheet" type="text/css" href='{% static "app.css" %}'>
     </head>
 
@@ -27,12 +28,13 @@
 
                 <div v-if="showKeywordsLoading" id="keywords-title" class="sub-title">Loading ...</div>
                 <div id="keywords-title" class="sub-title hidden">Keywords:</div>
-                <ul v-if="showKeywords">
-                    <li class="keywords" v-for="kw in keywords">
-                        {{ kw }}
-                    </li>
-                </ul>
-                <div class="button search">Search stuff using keywords</div>
+                <div class='keywords' id="keywords-list" v-for="(kw, index) in keywords">
+                    <label :for="'selected-keyword' + index" class="pure-checkbox">
+                        <input :id="'selected-keyword' + index" v-model="selectedKeywords" :value="kw.label" type="checkbox" checked>
+                        {{ kw.label }} (score: {{kw.score.toFixed(2)}})
+                    </label>
+                </div>
+                <div class="button search">Search with keywords</div>
                 <div v-if="showSearchLoading" id="keywords-title" class="sub-title">Loading ...</div>
                 <div id="datasets-title" class="sub-title hidden">Results:</div>
                 <h3 v-if="recursionLevel" class="recursion-level">Recursion level: {{ recursionLevel }}</h2>

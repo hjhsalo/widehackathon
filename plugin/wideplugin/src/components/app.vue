@@ -11,17 +11,17 @@
             <div v-if="showKeywords">
             <div id="keywords-title" class="sub-title hidden">Keywords:</div>
             <form class="pure-form">
-            <div id="keywords-list" v-for="kw in keywords">
-                <label for="selected-keyword" class="pure-checkbox">
-                    <input id="selected-keyword" type="checkbox" value="">
-                    {{ kw }}
+            <div id="keywords-list" v-for="(kw, index) in keywords">
+                <label :for="'selected-keyword' + index" class="pure-checkbox">
+                    <input :id="'selected-keyword' + index" v-model="selectedKeywords" :value="kw.label" type="checkbox" checked>
+                    {{ kw.label }} (score: {{kw.score.toFixed(2)}})
                 </label>
             </div>
             </form>
             </div>
         </fieldset>
         </div>
-        
+    
         <div class="pure-form pure-form-stacked">
         <fieldset>
             <div class="pure-g">
@@ -31,9 +31,9 @@
             </div>
             <div v-if="showSearchResults">
                 <div id="datasets-title" class="sub-title hidden">Sources:</div>
-                <div id="dataset-list" v-for="source in uniqueSources">
-                    <label for="selected-keyword" class="pure-checkbox">
-                        <input id="selected-keyword" type="checkbox" value="">
+                <div id="dataset-list" v-for="(source, index) in uniqueSources">
+                    <label :for="'selected-source' + index" class="pure-checkbox">
+                        <input :id="'selected-source' + index" type="checkbox" checked>
                         {{ source }}
                     </label>
                 </div>
@@ -41,6 +41,7 @@
         </fieldset>
         </div>
 
+        
         <div v-if="showSearchLoading" class="sub-title">Loading ...</div>
         <div v-if="showSearchResults">
         <div id="datasets-title" class="sub-title hidden">Results:</div>
@@ -77,6 +78,7 @@
                 searchResults: [],
                 annifSources: [],
                 datasetSources: [],
+                selectedKeywords: [],
                 publishedStartDate: null,
                 publishedEtartDate: null,
                 showKeywords: false,
@@ -114,6 +116,13 @@
                     console.log("Message from the content script scrape:");
                     console.log(response);
                     vm.keywords = response.keywords;
+                    response.keywords.forEach(function (res) {
+                        var keyword = res.label;
+
+                        if (vm.selectedKeywords.indexOf(keyword) === -1) {
+                            vm.selectedKeywords.push(keyword);
+                        }
+                    });
                     vm.showKeywordsLoading = false;
                     vm.showKeywords = true;
                 }).catch(function(err) {
@@ -131,7 +140,7 @@
                 vm.showSearchLoading = true;
                 browser.tabs.sendMessage(
                     tabs[0].id,
-                    { action: 'search', keywords: vm.keywords }
+                    { action: 'search', keywords: vm.selectedKeywords }
                 ).then(response => {
                     console.log("Message from the content script search:");
                     console.log(response);
