@@ -158,7 +158,7 @@
             showMore: function(tabs) {
                 var vm = this;
                 var creating = browser.tabs.create({
-                    url:"http://localhost:8000?keywords=" + vm.keywords.join(',')
+                    url:"http://localhost:8000?keywords=" + encodeURIComponent( JSON.stringify(vm.keywords) )
                 });
             },
 
