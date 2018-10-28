@@ -6,6 +6,7 @@ var app = new Vue({
     data () {
         return {
             scrapeInput: null,
+            selectedKeywords: [],
             keywords: [],
             searchResults: [],
             annifSources: [],
@@ -18,6 +19,21 @@ var app = new Vue({
             showKeywordsLoading: false,
             showSearchLoading: false,
             recursionLevel: 0
+        }
+    },
+    computed: {
+        uniqueSources: function() {
+        var sources   = [];
+
+        this.searchResults.datasets.forEach(function (res) {
+            var source = res.source;
+
+            if (sources.indexOf(source) === -1) {
+                sources.push(source);
+            }
+        });
+
+        return sources;
         }
     },
     methods: {
@@ -33,12 +49,14 @@ var app = new Vue({
             this.$http.post('/scrape', { content: vm.scrapeInput }).then(response => {
                 console.log('scrape ok');
                 console.log(response);
-                keywords = response.body.keywords;
-                vm.keywords = []
-                for (let kw of keywords) {
-                    item = { value: kw, checked: true};
-                    vm.keywords.push(item)
-                }
+                vm.keywords = response.body.keywords;
+                response.body.keywords.forEach(function (res) {
+                    var keyword = res.label;
+
+                    if (vm.selectedKeywords.indexOf(keyword) === -1) {
+                        vm.selectedKeywords.push(keyword);
+                    }
+                });
                 vm.showKeywordsLoading = false;
                 vm.showKeywords = true;
             }, response => {
@@ -76,22 +94,25 @@ var app = new Vue({
         },
 
         scrapeAbstract: function(abstract, recursionLevel) {
-            console.log('SCRAPING !');
+            console.log('SCRAPING ABSTRACT!');
             var vm = this;
             // vm.showKeywords = false;
             // vm.showSearchResults = false;
             this.$http.post('/scrape', { content: abstract }).then(response => {
                 console.log('scrape ok');
                 console.log(response);
-                keywords = response.body.keywords;
-                vm.keywords = []
-                for (let kw of keywords) {
-                    item = { value: kw, checked: true};
-                    vm.keywords.push(item)
-                }
+                abstractkw = []
+                vm.keywords = response.body.keywords;
+                response.body.keywords.forEach(function (res) {
+                    var keyword = res.label;
+
+                    if (abstractkw.indexOf(keyword) === -1) {
+                        abstractkw.push(keyword);
+                    }
+                });
                 console.log(window.location.host);
                 console.log(window.location.hostname);
-                window.location.href = 'http://localhost:8000/?keywords=' + keywords.join(',') + '&recursion=' + (recursionLevel + 1);
+                window.location.href = 'http://localhost:8000/?keywords=' + encodeURIComponent( JSON.stringify(vm.keywords) ) + '&recursion=' + (recursionLevel + 1);
             }, response => {
                 console.log('fffffffffff');
                 console.log(response);
@@ -105,15 +126,7 @@ var app = new Vue({
             var vm = this;
             vm.showSearchResults = false;
             vm.showSearchLoading = true;
-            keywords = []
-
-            for (let kw in vm.keywords) {
-                console.log(kw);
-                if (vm.keywords[kw].checked) {
-                    keywords.push(vm.keywords[kw].value)
-                }
-            }
-            this.$http.post('/search', { content: keywords }).then(response => {
+            this.$http.post('/search', { content: vm.selectedKeywords }).then(response => {
                 console.log('search ok');
                 console.log(response);
                 vm.searchResults = response.body.results;
@@ -185,17 +198,26 @@ var app = new Vue({
         this.listenForClicks();
         var urlParams = new URLSearchParams(window.location.search);
         console.log(urlParams);
-        var keywords = urlParams.get('keywords');
+        var localSelectedKeywords = [];
+        var rcKeywords = urlParams.get('keywords');
         var recursionLevel = urlParams.get('recursion');
-        console.log(keywords);
-        if (keywords) {
-            keywords = keywords.split(',');
-            this.keywords = []
-            for (let kw of keywords) {
-                item = { value: kw, checked: true};
-                this.keywords.push(item)
-            }
+        if (rcKeywords) {
+            // console.log(this.selectedKeywords);
+            this.keywords = JSON.parse(decodeURIComponent(rcKeywords));
+
+            this.keywords.forEach(function (res) {
+                var keyword = res.label; 
+
+                if (localSelectedKeywords.indexOf(keyword) === -1) {
+                    localSelectedKeywords.push(keyword);
+                }
+            });
+            this.selectedKeywords = localSelectedKeywords;
+            this.showKeywordsLoading = false;
             this.showKeywords = true;
+            console.log(rcKeywords);
+            console.log(this.keywords);
+            console.log(this.selectedKeywords);
             this.searchDatasets();
         }
         if (recursionLevel) {
