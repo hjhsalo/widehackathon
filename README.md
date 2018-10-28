@@ -1,4 +1,12 @@
-# widehackathon
+# Scrape-O-Matic
+## introduction
+
+A software to run Annif on various texts to produce relevant keywords
+and do a database search base on them.
+Input can be a text, audio file or a link to a YouTube video.
+The speech from audio/video is transribed to text.
+A plugin to scrape texts from websites is also provided.
+User can also do a recursive search based on obtained article abstracts .
 
 ## dependencies
 
@@ -13,6 +21,7 @@ python >=3.5
 	pip install -r requirements.txt
 	cp src/wide_app/secrets_template.py src/wide_app/secrets.py
 	# see secrets.py, and replace any temp values with proper values
+
 
 ## running django dev server
 
