@@ -40,6 +40,8 @@ var app = new Vue({
         scrape: function(tabs) {
             console.log('SCRAPING !');
             var vm = this;
+            vm.selectedKeywords = [];
+            vm.keywords = [];
             vm.showKeywords = false;
             vm.showSearchResults = false;
             if (!vm.scrapeInput) {
@@ -69,6 +71,8 @@ var app = new Vue({
         scrapeYoutube: function(tabs) {
             console.log('SCRAPING !');
             var vm = this;
+            vm.selectedKeywords = [];
+            vm.keywords = [];
             vm.showKeywords = false;
             vm.showSearchResults = false;
             if (!vm.youtubeLink) {
@@ -79,6 +83,13 @@ var app = new Vue({
                 console.log('scrape ok');
                 console.log(response);
                 vm.keywords = response.body.keywords;
+                response.body.keywords.forEach(function (res) {
+                    var keyword = res.label;
+
+                    if (vm.selectedKeywords.indexOf(keyword) === -1) {
+                        vm.selectedKeywords.push(keyword);
+                    }
+                });
                 vm.showKeywordsLoading = false;
                 vm.showKeywords = true;
             }, response => {
@@ -136,6 +147,8 @@ var app = new Vue({
 
         uploadFile: function(tabs) {
             var vm = this;
+            vm.selectedKeywords = [];
+            vm.keywords = [];
             vm.showKeywords = false;
             vm.showKeywordsLoading = true;
 
@@ -152,6 +165,13 @@ var app = new Vue({
                 console.log('upload ok');
                 console.log(response);
                 vm.keywords = response.body.keywords;
+                response.body.keywords.forEach(function (res) {
+                    var keyword = res.label;
+
+                    if (vm.selectedKeywords.indexOf(keyword) === -1) {
+                        vm.selectedKeywords.push(keyword);
+                    }
+                });
                 vm.showKeywordsLoading = false;
                 vm.showKeywords = true;
             }, response => {
@@ -205,9 +225,6 @@ var app = new Vue({
             this.selectedKeywords = localSelectedKeywords;
             this.showKeywordsLoading = false;
             this.showKeywords = true;
-            console.log(rcKeywords);
-            console.log(this.keywords);
-            console.log(this.selectedKeywords);
             this.searchDatasets();
         }
         if (recursionLevel) {

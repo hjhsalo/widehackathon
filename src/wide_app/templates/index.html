@@ -9,12 +9,13 @@
 
     <body>
         <div id="app" class="w3-container">
+            <img style='margin-right: auto; margin-left: auto; display: block; width:150px; height:150px' id='logo' src='{% static "logo.png" %}'>
             {% verbatim %}
             <div id="popup-content">
 
                 <h1 style="text-align: center; text-decoration: underline">Scrape-&#937;-Matic</h1>
 
-                <textarea style="width: 100%; height: 5em" v-model="scrapeInput" placeholder="You can also paste text here. In practice acts as a wrapper for annif."></textarea>
+                <textarea style="width: 100%; height: 5em" v-model="scrapeInput" placeholder="Paste text or link to a page here."></textarea>
                 <div class="button scrape">Scrape keywords from text area</div>
 
 
